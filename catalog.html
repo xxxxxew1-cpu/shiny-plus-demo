@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Каталог шин и дисков — ШИНА +</title>
+<meta name="description" content="Шины и диски в Новокузнецке: подбор по размеру, сезону и бренду. ТЦ «Европейский», ул. ДОЗ, 2Б.">
+<meta name="theme-color" content="#101215">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="page-inner">
+<div class="demo-bar" role="note">Демо-версия дизайна: товары и цены условные, заказы не отправляются</div>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<canvas class="ribbons" id="ribbons" aria-hidden="true"></canvas>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="index.html"><img src="logo-light.png" width="98" height="73" alt="ШИНА +"></a>
+    <nav class="main-nav" aria-label="Основное меню">
+      <a href="catalog.html?type=tires" data-nav="tires">Шины</a>
+      <a href="catalog.html?type=wheels" data-nav="wheels">Диски</a>
+      <a href="contacts.html" data-nav="contacts">Контакты</a>
+    </nav>
+    <div class="header-actions">
+      <a class="phone" href="tel:+79059102002">+7&nbsp;905&nbsp;910-20-02</a>
+      <a class="btn btn-line btn-wa" href="https://wa.me/79059102002" data-wa="Здравствуйте!">
+        <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
+        <span class="btn-label">Написать в WhatsApp</span>
+      </a>
+      <a class="cart" id="cart" href="cart.html" aria-label="Корзина: 0 товаров">
+        <svg class="icon" style="width:24px;height:24px" aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <nav aria-label="Навигация по разделам"><ol class="crumbs"><li><a href="index.html">Главная</a></li><li aria-current="page" id="crumb-here">Шины</li></ol></nav>
+      <h1 class="page-title" id="page-title">Шины</h1>
+    </header>
+    <div class="kind-switch" aria-label="Раздел каталога">
+      <a href="catalog.html?type=tires" data-type="tires">Шины</a>
+      <a href="catalog.html?type=wheels" data-type="wheels">Диски</a>
+    </div>
+
+    <div class="catalog-layout">
+      <aside class="filters" id="filters" aria-labelledby="filters-title">
+        <div class="filters-head">
+          <h2 id="filters-title">Фильтры</h2>
+          <button type="button" class="filters-close" id="filters-close" aria-label="Закрыть фильтры"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="filters-body" id="filters-body"></div>
+        <div class="filters-foot">
+          <button type="button" class="btn btn-line" id="filters-reset">Сбросить</button>
+          <button type="button" class="btn btn-red" id="filters-apply">Показать</button>
+        </div>
+      </aside>
+      <div class="filters-backdrop" id="filters-backdrop" hidden></div>
+
+      <section aria-labelledby="page-title">
+        <div class="toolbar">
+          <p class="toolbar-count" id="count" aria-live="polite"></p>
+          <div class="toolbar-actions">
+            <button type="button" class="btn btn-line btn-filters" id="filters-open" aria-controls="filters" aria-expanded="false">
+              <svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg>Фильтры<span class="badge" id="filters-n" hidden></span>
+            </button>
+            <label><span class="visually-hidden">Сортировка</span>
+              <select class="select" id="sort">
+                <option value="cheap">Сначала дешевле</option>
+                <option value="expensive">Сначала дороже</option>
+                <option value="name">По названию</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="active-filters" id="active"></div>
+        <ul class="grid" id="results"></ul>
+        <div class="empty" id="empty" hidden>
+          <p id="empty-text"></p>
+          <a class="btn btn-red" id="empty-wa" href="https://wa.me/79059102002">Написать в WhatsApp</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 ШИНА +. Шины и диски в Новокузнецке</p>
+    <nav class="footer-nav" aria-label="Нижнее меню">
+      <a href="catalog.html?type=tires">Шины</a>
+      <a href="catalog.html?type=wheels">Диски</a>
+      <a href="contacts.html">Контакты</a>
+      <a href="#">Политика конфиденциальности</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="assets/shop.js"></script>
+<script src="assets/wheel3d.js"></script>
+<script>
+(() => {
+const params = new URLSearchParams(location.search);
+const type = params.get('type') === 'wheels' ? 'wheels' : 'tires';
+const ALL = type === 'tires' ? TIRES : WHEELS;
+// поле → [ключ в адресе, подпись]
+const SIZE_FIELDS = type === 'tires'
+  ? [['width', 'w', 'Ширина'], ['profile', 'p', 'Профиль'], ['diameter', 'd', 'Диаметр']]
+  : [['diameter', 'd', 'Диаметр'], ['pcd', 'pcd', 'Сверловка'], ['et', 'et', 'Вылет']];
+const ANY = { width: 'любая', profile: 'любой', diameter: 'любой', pcd: 'любая', et: 'любой' };
+const showValue = (field, v) => (!v ? ANY[field] : field === 'diameter' ? `R${v}` : field === 'et' ? `ET${v}` : v);
+const listParam = (v) => (v ? v.split(',').filter(Boolean) : []);
+const f = {
+  season: listParam(params.get('season')).filter((s) => SEASONS[s]),
+  size: Object.fromEntries(SIZE_FIELDS.map(([field, key]) => [field, params.get(key) || ''])),
+  brand: listParam(params.get('brand')),
+  min: params.get('min') || '',
+  max: params.get('max') || '',
+  sort: ['cheap', 'expensive', 'name'].includes(params.get('sort')) ? params.get('sort') : 'cheap',
+};
+const valueOf = (item, field) => ({ width: item.width, profile: item.profile, diameter: item.d, pcd: item.pcd, et: item.et })[field];
+
+function passes(item, skip) {
+  if (type === 'tires' && skip !== 'season' && f.season.length && !f.season.includes(item.season)) return false;
+  for (const [field] of SIZE_FIELDS) if (skip !== field && f.size[field] && String(valueOf(item, field)) !== f.size[field]) return false;
+  if (skip !== 'brand' && f.brand.length && !f.brand.includes(item.brand)) return false;
+  if (f.min && item.price < +f.min) return false;
+  if (f.max && item.price > +f.max) return false;
+  return true;
+}
+const countWith = (field, value) => ALL.filter((i) => passes(i, field) && (!value || String(valueOf(i, field)) === value)).length;
+
+// ---------- Фильтры ----------
+const title = type === 'tires' ? 'Шины' : 'Диски';
+document.title = `${title} в Новокузнецке — каталог | ШИНА +`;
+$('#page-title').textContent = title;
+$('#crumb-here').textContent = title;
+for (const a of $$('.kind-switch a')) if (a.dataset.type === type) a.setAttribute('aria-current', 'page');
+for (const a of $$('[data-nav]')) if (a.dataset.nav === type) a.setAttribute('aria-current', 'page');
+$('#sort').value = f.sort;
+
+const brands = [...new Set(ALL.map((i) => i.brand))].sort((a, b) => a.localeCompare(b));
+const prices = ALL.map((i) => i.price);
+$('#filters-body').innerHTML = (type === 'tires' ? `
+  <fieldset class="fgroup"><legend>Сезон</legend><div class="fchips">${Object.keys(SEASONS).map((s) =>
+    `<label class="fchip"><input type="checkbox" name="season" value="${s}"><span>${icon(s)}${SEASON_SHORT[s]}</span></label>`).join('')}</div></fieldset>` : '') + `
+  <fieldset class="fgroup"><legend>${type === 'tires' ? 'Размер' : 'Параметры'}</legend><div class="fsize">${SIZE_FIELDS.map(([field, , label]) =>
+    `<button type="button" class="fsize-btn" data-field="${field}" aria-haspopup="listbox" aria-expanded="false"><span class="fsize-label">${label}</span><span class="fsize-val"></span></button>`).join('')}</div></fieldset>
+  <fieldset class="fgroup"><legend>Бренд</legend><div class="fchecks">${brands.map((b) =>
+    `<label class="fcheck"><input type="checkbox" name="brand" value="${b}"><span>${b}</span><small data-brand="${b}"></small></label>`).join('')}</div></fieldset>
+  <fieldset class="fgroup"><legend>Цена за штуку, ₽</legend><div class="fprice">
+    <label><span class="visually-hidden">Цена от, рублей</span><input class="input" type="number" inputmode="numeric" min="0" step="100" name="min" placeholder="от ${Math.min(...prices).toLocaleString('ru-RU')}"></label>
+    <label><span class="visually-hidden">Цена до, рублей</span><input class="input" type="number" inputmode="numeric" min="0" step="100" name="max" placeholder="до ${Math.max(...prices).toLocaleString('ru-RU')}"></label>
+  </div></fieldset>`;
+
+function sorted(items) {
+  const s = [...items];
+  if (f.sort === 'cheap') s.sort((a, b) => a.price - b.price);
+  if (f.sort === 'expensive') s.sort((a, b) => b.price - a.price);
+  if (f.sort === 'name') s.sort((a, b) => titleText(a).localeCompare(titleText(b), 'ru'));
+  return s;
+}
+
+function activeChips() {
+  const chips = [];
+  for (const s of f.season) chips.push([`season:${s}`, SEASON_SHORT[s]]);
+  for (const [field, , label] of SIZE_FIELDS) if (f.size[field]) chips.push([`size:${field}`, `${label} ${showValue(field, f.size[field])}`]);
+  for (const b of f.brand) chips.push([`brand:${b}`, b]);
+  if (f.min) chips.push(['min', `от ${rubText(+f.min)}`]);
+  if (f.max) chips.push(['max', `до ${rubText(+f.max)}`]);
+  return chips;
+}
+
+function syncUrl() {
+  const p = new URLSearchParams({ type });
+  if (f.season.length) p.set('season', f.season.join(','));
+  for (const [field, key] of SIZE_FIELDS) if (f.size[field]) p.set(key, f.size[field]);
+  if (f.brand.length) p.set('brand', f.brand.join(','));
+  if (f.min) p.set('min', f.min);
+  if (f.max) p.set('max', f.max);
+  if (f.sort !== 'cheap') p.set('sort', f.sort);
+  try { history.replaceState(null, '', `?${p}`); } catch { /* file:// в некоторых браузерах */ }
+}
+
+let lastKey = '';
+function apply() {
+  const items = sorted(ALL.filter((i) => passes(i)));
+  const n = items.length;
+  $('#count').textContent = n ? `Найдено ${n} ${plural(n, NOUN_FOUND[type])}` : 'Ничего не найдено';
+  $('#filters-apply').textContent = n ? `Показать ${n} ${plural(n, NOUN_SHOW[type])}` : 'Ничего не найдено';
+  // сетку перерисовываем только если поменялся состав или порядок — иначе карточки «мигают»
+  const key = items.map((i) => i.id).join();
+  if (key !== lastKey) {
+    lastKey = key;
+    $('#results').innerHTML = items.map(cardHTML).join('');
+    reveal($$('.card', $('#results')));
+    thumbs.attach($('#results'));
+  }
+  $('#results').hidden = !n;
+  $('#empty').hidden = !!n;
+  if (!n) {
+    $('#empty-text').textContent = 'С такими фильтрами ничего нет. Измените фильтры или напишите нам в WhatsApp — подскажем, что можно предложить.';
+    const want = [...f.season.map((s) => SEASON_SHORT[s].toLowerCase()), title.toLowerCase(),
+      ...SIZE_FIELDS.filter(([field]) => f.size[field]).map(([field]) => showValue(field, f.size[field]))].join(' ');
+    $('#empty-wa').href = waLink(`Здравствуйте! Ищу ${want}.`);
+  }
+  for (const el of $$('[data-brand]')) {
+    const c = ALL.filter((i) => passes(i, 'brand') && i.brand === el.dataset.brand).length;
+    el.textContent = c;
+    el.closest('.fcheck').classList.toggle('is-empty', !c);
+  }
+  for (const input of $$('input[name="season"]')) input.checked = f.season.includes(input.value);
+  for (const input of $$('input[name="brand"]')) input.checked = f.brand.includes(input.value);
+  for (const btn of $$('.fsize-btn')) {
+    const field = btn.dataset.field;
+    $('.fsize-val', btn).textContent = showValue(field, f.size[field]);
+    btn.classList.toggle('is-set', !!f.size[field]);
+    btn.setAttribute('aria-label', `${FIELD_TITLES[type][field]}: ${showValue(field, f.size[field])}`);
+  }
+  $('input[name="min"]').value = f.min;
+  $('input[name="max"]').value = f.max;
+  const chips = activeChips();
+  $('#active').innerHTML = chips.map(([k, label]) =>
+    `<button type="button" class="achip" data-clear="${k}">${label}<svg class="icon" aria-hidden="true"><use href="#i-close"/></svg><span class="visually-hidden">, убрать фильтр</span></button>`).join('')
+    + (chips.length > 1 ? '<button type="button" class="achip achip-reset" data-clear="all">Сбросить всё</button>' : '');
+  $('#filters-n').textContent = chips.length;
+  $('#filters-n').hidden = !chips.length;
+  syncUrl();
+}
+
+function resetAll() {
+  f.season = []; f.brand = []; f.min = ''; f.max = '';
+  for (const [field] of SIZE_FIELDS) f.size[field] = '';
+  apply();
+}
+
+$('#filters-body').addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.name === 'season') f.season = $$('input[name="season"]:checked').map((i) => i.value);
+  if (t.name === 'brand') f.brand = $$('input[name="brand"]:checked').map((i) => i.value);
+  if (t.name === 'season' || t.name === 'brand') apply();
+});
+let priceTimer = 0;
+$('#filters-body').addEventListener('input', (e) => {
+  if (e.target.name !== 'min' && e.target.name !== 'max') return;
+  clearTimeout(priceTimer);
+  priceTimer = setTimeout(() => {
+    f[e.target.name] = e.target.value && +e.target.value > 0 ? String(Math.round(+e.target.value)) : '';
+    apply();
+  }, 350);
+});
+$('#filters-body').addEventListener('click', (e) => {
+  const btn = e.target.closest('.fsize-btn');
+  if (!btn) return;
+  if (drum.isOpenFor(btn)) return drum.finish(true);
+  const field = btn.dataset.field;
+  const values = ['', ...OPTIONS[type][field].filter((v) => v !== '')];
+  drum.open(btn, {
+    title: FIELD_TITLES[type][field],
+    value: f.size[field],
+    extra: field === 'et' ? etDiagram : null,
+    options: values.map((value) => ({ value, label: showValue(field, value), available: !!value && countWith(field, value) > 0 })),
+    onPreview: (value) => { if (f.size[field] !== value) { f.size[field] = value; apply(); } },
+  });
+});
+$('#sort').addEventListener('change', (e) => { f.sort = e.target.value; apply(); });
+$('#active').addEventListener('click', (e) => {
+  const k = e.target.closest('[data-clear]')?.dataset.clear;
+  if (!k) return;
+  if (k === 'all') return resetAll();
+  const [what, val] = k.split(':');
+  if (what === 'season') f.season = f.season.filter((s) => s !== val);
+  if (what === 'brand') f.brand = f.brand.filter((b) => b !== val);
+  if (what === 'size') f.size[val] = '';
+  if (what === 'min' || what === 'max') f[what] = '';
+  apply();
+});
+
+// ---------- Фильтры на телефоне и планшете: панель снизу ----------
+const panel = $('#filters'), backdrop = $('#filters-backdrop'), opener = $('#filters-open');
+function openFilters() {
+  panel.classList.add('is-open');
+  backdrop.hidden = false;
+  opener.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+  $('#filters-close').focus();
+}
+function closeFilters() {
+  if (!panel.classList.contains('is-open')) return;
+  panel.classList.remove('is-open');
+  backdrop.hidden = true;
+  opener.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+  opener.focus();
+}
+opener.addEventListener('click', openFilters);
+$('#filters-close').addEventListener('click', closeFilters);
+$('#filters-apply').addEventListener('click', closeFilters);
+backdrop.addEventListener('click', closeFilters);
+$('#filters-reset').addEventListener('click', resetAll);
+// Esc закрывает панель фильтров, если сейчас не открыт барабан (его Esc закрывает сам)
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && $('#drum-pop').hidden) closeFilters(); });
+
+bindCards($('#results'));
+thumbs.use(offscreenTire3D());
+startRibbons($('#ribbons'));
+reveal([$('.page-head'), $('.kind-switch')]);
+apply();
+})();
+</script>
+</body>
+</html>

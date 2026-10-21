@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Товар — ШИНА +</title>
+<meta name="description" content="Шины и диски в Новокузнецке: характеристики, цена, покупка в WhatsApp.">
+<meta name="theme-color" content="#101215">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="page-inner">
+<div class="demo-bar" role="note">Демо-версия дизайна: товары и цены условные, заказы не отправляются</div>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<canvas class="ribbons" id="ribbons" aria-hidden="true"></canvas>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="index.html"><img src="logo-light.png" width="98" height="73" alt="ШИНА +"></a>
+    <nav class="main-nav" aria-label="Основное меню">
+      <a href="catalog.html?type=tires" data-nav="tires">Шины</a>
+      <a href="catalog.html?type=wheels" data-nav="wheels">Диски</a>
+      <a href="contacts.html" data-nav="contacts">Контакты</a>
+    </nav>
+    <div class="header-actions">
+      <a class="phone" href="tel:+79059102002">+7&nbsp;905&nbsp;910-20-02</a>
+      <a class="btn btn-line btn-wa" href="https://wa.me/79059102002" data-wa="Здравствуйте!">
+        <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
+        <span class="btn-label">Написать в WhatsApp</span>
+      </a>
+      <a class="cart" id="cart" href="cart.html" aria-label="Корзина: 0 товаров">
+        <svg class="icon" style="width:24px;height:24px" aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <nav aria-label="Навигация по разделам" class="page-head" style="padding-bottom:0"><ol class="crumbs">
+      <li><a href="index.html">Главная</a></li><li><a href="catalog.html?type=tires" id="crumb-cat">Шины</a></li><li aria-current="page" id="crumb-here"></li>
+    </ol></nav>
+
+    <div class="not-found" id="not-found" hidden>
+      <h1 class="page-title">Товар не найден</h1>
+      <p>Возможно, ссылка устарела или товар закончился. Посмотрите каталог или напишите нам — подскажем.</p>
+      <div class="empty-actions"><a class="btn btn-red" href="catalog.html?type=tires">Каталог шин</a><a class="btn btn-line" href="catalog.html?type=wheels">Каталог дисков</a></div>
+    </div>
+
+    <article class="product" id="product" hidden>
+      <div class="product-stage" id="tire-stage">
+        <p class="tire-hint" aria-hidden="true">Поверните подиум мышью или пальцем</p>
+      </div>
+      <div class="product-info">
+        <p class="product-brand" id="p-brand"></p>
+        <h1 class="product-title" id="p-title"></h1>
+        <p class="product-size" id="p-size"></p>
+        <p class="product-kind" id="p-kind"></p>
+        <p class="product-price" id="p-price"></p>
+        <div class="buy">
+          <div class="buy-row">
+            <div class="stepper" id="qty-stepper">
+              <button type="button" data-step="-1" aria-label="Меньше">−</button>
+              <input type="number" id="qty" value="4" min="1" max="99" inputmode="numeric" aria-label="Количество, штук">
+              <button type="button" data-step="1" aria-label="Больше">+</button>
+            </div>
+            <p class="buy-total" id="buy-total" aria-live="polite"></p>
+          </div>
+          <button type="button" class="btn btn-red btn-lg buy-add" id="add">В корзину</button>
+          <p class="buy-note">Самовывоз: ТЦ «Европейский», 2&nbsp;этаж, ул. ДОЗ, 2Б. Перед поездкой уточните наличие по&nbsp;телефону <a href="tel:+79059102002">+7&nbsp;905&nbsp;910-20-02</a>.</p>
+        </div>
+      </div>
+    </article>
+
+    <section class="specs" id="specs" aria-labelledby="specs-h" hidden>
+      <h2 class="section-h" id="specs-h">Характеристики</h2>
+      <dl class="spec-list" id="spec-list"></dl>
+      <div class="et-figure" id="et-figure" hidden></div>
+    </section>
+
+    <section class="related" id="related" aria-labelledby="related-h" hidden>
+      <h2 class="section-h" id="related-h"></h2>
+      <ul class="grid" id="related-list"></ul>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 ШИНА +. Шины и диски в Новокузнецке</p>
+    <nav class="footer-nav" aria-label="Нижнее меню">
+      <a href="catalog.html?type=tires">Шины</a>
+      <a href="catalog.html?type=wheels">Диски</a>
+      <a href="contacts.html">Контакты</a>
+      <a href="#">Политика конфиденциальности</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="assets/shop.js"></script>
+<script src="assets/wheel3d.js"></script>
+<script>
+(() => {
+const item = findItem(new URLSearchParams(location.search).get('id'));
+if (!item) {
+  $('#not-found').hidden = false;
+  startRibbons($('#ribbons'));
+  return;
+}
+const wheel = isWheel(item);
+const kind = kindOf(item);
+const catTitle = wheel ? 'Диски' : 'Шины';
+document.title = `${titleText(item)} ${sizeText(item)} — купить в Новокузнецке | ШИНА +`;
+for (const a of $$('[data-nav]')) if (a.dataset.nav === kind) a.setAttribute('aria-current', 'page');
+$('#crumb-cat').textContent = catTitle;
+$('#crumb-cat').href = `catalog.html?type=${kind}`;
+$('#crumb-here').textContent = titleText(item);
+$('#product').hidden = false;
+$('#specs').hidden = false;
+
+$('#p-brand').textContent = item.brand;
+$('#p-title').textContent = item.model;
+$('#p-size').innerHTML = wheel
+  ? `${item.rim}×${item.d} <small>${item.pcd} ET${item.et}</small>`
+  : `${item.width}/${item.profile} R${item.d} <small>${item.index}</small>`;
+$('#p-kind').innerHTML = wheel ? `${icon('wheel')}${item.note}` : `${icon(item.season)}${SEASONS[item.season].one}`;
+$('#p-price').innerHTML = `${rub(item.price)} <small>за шт.</small>`;
+
+// ---------- Количество и покупка ----------
+const qtyInput = $('#qty');
+const getQty = () => clamp(Math.round(+qtyInput.value) || 1, 1, 99);
+function syncBuy() {
+  const q = getQty();
+  $('#buy-total').innerHTML = `${q === 4 ? 'Комплект 4 шт.' : `${q} шт.`} — ${rub(q * item.price)}`;
+  $('[data-step="-1"]').disabled = q <= 1;
+}
+$('#qty-stepper').addEventListener('click', (e) => {
+  const step = +e.target.closest('[data-step]')?.dataset.step;
+  if (!step) return;
+  qtyInput.value = clamp(getQty() + step, 1, 99);
+  syncBuy();
+});
+qtyInput.addEventListener('input', syncBuy);
+qtyInput.addEventListener('blur', () => { qtyInput.value = getQty(); syncBuy(); });
+$('#add').addEventListener('click', () => {
+  if ($('#add').dataset.done) { location.href = 'cart.html'; return; }
+  const q = getQty();
+  Cart.add(item.id, q);
+  $('#add').dataset.done = '1';
+  $('#add').innerHTML = `${icon('check')}Перейти в корзину`;
+  toast(`${icon('check')}<span><b>${titleText(item)}</b>, ${q} шт., в корзине</span><a href="cart.html">Перейти в корзину</a>`);
+});
+syncBuy();
+
+// ---------- Характеристики ----------
+const row = (dt, dd, note = '') => `<div><dt>${dt}</dt><dd>${dd}${note ? `<small>${note}</small>` : ''}</dd></div>`;
+let specs;
+if (wheel) {
+  const [type, color] = item.note.split(', ');
+  const rimMm = Math.round(parseFloat(item.rim.replace(',', '.')) * 25.4);
+  specs = [
+    row('Тип', type), row('Цвет', color[0].toUpperCase() + color.slice(1)),
+    row('Ширина обода', `${item.rim}J`, `около ${rimMm} мм`),
+    row('Диаметр', `R${item.d}`, `${item.d} дюймов`),
+    row('Сверловка (PCD)', item.pcd, `${parseInt(item.pcd, 10)} болта на окружности ${item.pcd.split('×')[1]} мм`.replace('5 болта', '5 болтов').replace('6 болта', '6 болтов')),
+    row('Вылет (ET)', `${item.et} мм`, 'расстояние от середины обода до привалочной плоскости'),
+    row('Центральное отверстие (DIA)', `${item.dia} мм`),
+  ];
+  $('#et-figure').innerHTML = etDiagram(String(item.et));
+  $('#et-figure').hidden = false;
+} else {
+  const side = Math.round(item.width * item.profile / 100);
+  const rimMm = Math.round(item.d * 25.4);
+  const load = parseInt(item.index, 10), speed = item.index.replace(/\d/g, '');
+  specs = [
+    row('Сезон', SEASONS[item.season].one.split(',')[0]),
+    row('Шипы', item.season === 'winter' ? 'Есть' : 'Нет'),
+    row('Ширина профиля', `${item.width} мм`),
+    row('Высота профиля', `${item.profile} %`, `около ${side} мм`),
+    row('Посадочный диаметр', `R${item.d}`, `${rimMm} мм`),
+    row('Наружный диаметр', `около ${rimMm + 2 * side} мм`),
+    row('Индекс нагрузки', String(load), LOAD_KG[load] ? `до ${LOAD_KG[load]} кг на шину` : ''),
+    row('Индекс скорости', speed, SPEED_KMH[speed] ? `до ${SPEED_KMH[speed]} км/ч` : ''),
+  ];
+}
+$('#spec-list').innerHTML = specs.join('');
+
+// ---------- Похожие товары ----------
+const sameSize = wheel
+  ? WHEELS.filter((w) => w !== item && w.d === item.d && w.pcd === item.pcd)
+  : TIRES.filter((t) => t !== item && t.width === item.width && t.profile === item.profile && t.d === item.d);
+const related = sameSize.length ? sameSize : (wheel ? WHEELS : TIRES.filter((t) => t.season === item.season)).filter((x) => x !== item).slice(0, 4);
+if (related.length) {
+  $('#related-h').textContent = sameSize.length
+    ? (wheel ? `Ещё диски R${item.d} ${item.pcd}` : `Ещё в размере ${item.width}/${item.profile} R${item.d}`)
+    : (wheel ? 'Другие диски' : `Другие ${SEASONS[item.season].many.toLowerCase()}`);
+  $('#related-list').innerHTML = related.map(cardHTML).join('');
+  $('#related').hidden = false;
+  bindCards($('#related-list'));
+}
+
+// ---------- 3D: именно это колесо ----------
+const tire3d = createTire3D($('#tire-stage'));
+tire3d.update(wheel
+  ? { w: 195, p: 55, d: item.d, et: item.et, pcd: pcdMm(item.pcd), season: 'summer', bolts: parseInt(item.pcd, 10), label: `195/55 R${item.d}`, kind: 'wheels', rim: 'steel' }
+  : { w: item.width, p: item.profile, d: item.d, et: 40, pcd: 114.3, season: item.season, bolts: 5, label: `${item.width}/${item.profile} R${item.d}`, kind: 'tires' });
+thumbs.use(tire3d);
+if (related.length) thumbs.attach($('#related-list'));
+startRibbons($('#ribbons'));
+reveal([$('.product-info'), $('#specs'), $('#related')].filter((el) => !el.hidden));
+tire3d.intro();
+})();
+</script>
+</body>
+</html>

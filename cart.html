@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Корзина — ШИНА +</title>
+<meta name="description" content="Корзина и оформление заказа: шины и диски в Новокузнецке.">
+<meta name="theme-color" content="#101215">
+<script>document.documentElement.classList.add('js');</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="page-inner">
+<div class="demo-bar" role="note">Демо-версия дизайна: товары и цены условные, заказы не отправляются</div>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<canvas class="ribbons" id="ribbons" aria-hidden="true"></canvas>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="index.html"><img src="logo-light.png" width="98" height="73" alt="ШИНА +"></a>
+    <nav class="main-nav" aria-label="Основное меню">
+      <a href="catalog.html?type=tires" data-nav="tires">Шины</a>
+      <a href="catalog.html?type=wheels" data-nav="wheels">Диски</a>
+      <a href="contacts.html" data-nav="contacts">Контакты</a>
+    </nav>
+    <div class="header-actions">
+      <a class="phone" href="tel:+79059102002">+7&nbsp;905&nbsp;910-20-02</a>
+      <a class="btn btn-line btn-wa" href="https://wa.me/79059102002" data-wa="Здравствуйте!">
+        <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
+        <span class="btn-label">Написать в WhatsApp</span>
+      </a>
+      <a class="cart" id="cart" href="cart.html" aria-label="Корзина: 0 товаров">
+        <svg class="icon" style="width:24px;height:24px" aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <nav aria-label="Навигация по разделам"><ol class="crumbs"><li><a href="index.html">Главная</a></li><li aria-current="page">Корзина</li></ol></nav>
+      <h1 class="page-title" id="cart-title" tabindex="-1">Корзина</h1>
+      <p class="page-meta" id="cart-meta" aria-live="polite"></p>
+    </header>
+
+    <div class="cart-empty" id="cart-empty" hidden>
+      <p>В корзине пока пусто. Подберите шины или диски по размеру — это займёт минуту.</p>
+      <div class="empty-actions"><a class="btn btn-red" href="catalog.html?type=tires">Каталог шин</a><a class="btn btn-line" href="catalog.html?type=wheels">Каталог дисков</a></div>
+    </div>
+
+    <div class="cart-layout" id="cart-layout" hidden>
+      <div>
+        <ul class="cart-list" id="cart-list"></ul>
+
+        <form class="checkout" id="checkout" novalidate aria-labelledby="checkout-h">
+          <h2 class="section-h" id="checkout-h" tabindex="-1">Оформление заказа</h2>
+          <div class="field">
+            <label for="f-name">Имя</label>
+            <input class="input" id="f-name" name="name" autocomplete="name" required aria-describedby="e-name">
+            <p class="field-error" id="e-name" hidden>Укажите имя, чтобы мы знали, как к вам обращаться</p>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input class="input" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 123-45-67" required aria-describedby="e-phone">
+            <p class="field-error" id="e-phone" hidden>Укажите телефон полностью — 11 цифр, начиная с +7</p>
+          </div>
+          <fieldset class="field">
+            <legend>Получение</legend>
+            <label class="radio"><input type="radio" name="delivery" value="pickup" checked><span><b>Самовывоз</b>ТЦ «Европейский», 2&nbsp;этаж, ул.&nbsp;ДОЗ, 2Б</span></label>
+            <label class="radio"><input type="radio" name="delivery" value="delivery"><span><b>Нужна доставка</b>Обсудим условия по телефону</span></label>
+          </fieldset>
+          <div class="field">
+            <label for="f-comment">Комментарий <small>необязательно</small></label>
+            <textarea class="input" id="f-comment" name="comment" rows="3" placeholder="Например, марка и год автомобиля или удобное время для звонка"></textarea>
+          </div>
+          <label class="consent"><input type="checkbox" name="consent" id="f-consent" aria-describedby="e-consent"><span>Согласен на обработку персональных данных по&nbsp;<a href="#">политике конфиденциальности</a></span></label>
+          <p class="field-error" id="e-consent" hidden>Нужно ваше согласие, иначе мы не сможем связаться с вами по заказу</p>
+          <div class="checkout-actions">
+            <button type="submit" class="btn btn-red btn-lg">Оформить заказ</button>
+            <p class="checkout-note">Мы свяжемся с вами, чтобы подтвердить наличие и детали заказа.</p>
+          </div>
+        </form>
+      </div>
+
+      <aside class="cart-summary" aria-label="Итог заказа">
+        <dl>
+          <div><dt>Товаров</dt><dd id="sum-count"></dd></div>
+          <div class="sum-total"><dt>Итого</dt><dd id="sum-total"></dd></div>
+        </dl>
+        <a class="btn btn-red btn-lg" href="#checkout" id="to-checkout">Оформить заказ</a>
+        <p class="sum-note">Самовывоз: ТЦ «Европейский», 2&nbsp;этаж, ул.&nbsp;ДОЗ, 2Б.</p>
+      </aside>
+    </div>
+
+    <section class="order-done" id="order-done" hidden aria-labelledby="done-h">
+      <h2 id="done-h" tabindex="-1">Заказ принят</h2>
+      <p>Номер заказа: <span class="order-num" id="order-num"></span>. Мы свяжемся с вами по телефону <span class="order-num" id="order-phone"></span>, чтобы подтвердить наличие и детали.</p>
+      <div class="done-actions">
+        <a class="btn btn-line" href="catalog.html?type=tires">Вернуться в каталог</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 ШИНА +. Шины и диски в Новокузнецке</p>
+    <nav class="footer-nav" aria-label="Нижнее меню">
+      <a href="catalog.html?type=tires">Шины</a>
+      <a href="catalog.html?type=wheels">Диски</a>
+      <a href="contacts.html">Контакты</a>
+      <a href="#">Политика конфиденциальности</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="assets/shop.js"></script>
+<script src="assets/wheel3d.js"></script>
+<script>
+(() => {
+const t3 = offscreenTire3D();
+thumbs.use(t3);
+
+function rowHTML({ item, qty }) {
+  const key = thumbs.keyOf(thumbs.specFor(item));
+  const kindLine = isWheel(item) ? item.note : SEASONS[item.season].one;
+  return `<li class="cart-row" data-id="${item.id}">
+    <a class="cart-thumb" href="${productUrl(item)}" tabindex="-1" aria-hidden="true">
+      <img class="card-img" alt="" width="480" height="360" data-thumb='${key}'>
+      <div class="card-ph">${icon(isWheel(item) ? 'wheel' : item.season)}</div>
+    </a>
+    <div class="cart-info">
+      <a class="cart-name" href="${productUrl(item)}">${titleText(item)}</a>
+      <p class="cart-size">${sizeText(item)}</p>
+      <p class="cart-unit">${kindLine}, ${rub(item.price)} за шт.</p>
+    </div>
+    <div class="stepper">
+      <button type="button" data-step="-1" aria-label="Меньше: ${titleText(item)}" ${qty <= 1 ? 'disabled' : ''}>−</button>
+      <input type="number" value="${qty}" min="1" max="99" inputmode="numeric" aria-label="Количество: ${titleText(item)}">
+      <button type="button" data-step="1" aria-label="Больше: ${titleText(item)}">+</button>
+    </div>
+    <p class="cart-line">${rub(qty * item.price)}</p>
+    <button type="button" class="cart-remove" aria-label="Удалить из корзины: ${titleText(item)}"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </li>`;
+}
+
+function render() {
+  const lines = Cart.lines();
+  const n = Cart.count();
+  const empty = !lines.length;
+  if (!$('#order-done').hidden) return;
+  $('#cart-empty').hidden = !empty;
+  $('#cart-layout').hidden = empty;
+  $('#cart-meta').textContent = empty ? '' : `${n} ${plural(n, ['товар', 'товара', 'товаров'])} на ${rubText(Cart.total())}`;
+  if (empty) return;
+  // перерисовываем строки, только если поменялся состав — иначе слетает фокус в поле количества
+  const key = lines.map((l) => l.id).join();
+  if (render.key !== key) {
+    render.key = key;
+    $('#cart-list').innerHTML = lines.map(rowHTML).join('');
+    thumbs.attach($('#cart-list'));
+  } else {
+    for (const { item, qty } of lines) {
+      const li = $(`.cart-row[data-id="${item.id}"]`);
+      const input = $('input', li);
+      if (document.activeElement !== input) input.value = qty;
+      $('[data-step="-1"]', li).disabled = qty <= 1;
+      $('.cart-line', li).innerHTML = rub(qty * item.price);
+    }
+  }
+  $('#sum-count').textContent = `${n} шт.`;
+  $('#sum-total').innerHTML = rub(Cart.total());
+}
+
+$('#cart-list').addEventListener('click', (e) => {
+  const li = e.target.closest('.cart-row');
+  if (!li) return;
+  const id = li.dataset.id;
+  if (e.target.closest('.cart-remove')) {
+    const item = findItem(id);
+    Cart.remove(id);
+    toast(`<span>${titleText(item)} — удалено из корзины</span>`);
+    return;
+  }
+  const step = +e.target.closest('[data-step]')?.dataset.step;
+  if (step) Cart.set(id, Math.max(1, Cart.qty(id) + step));
+});
+$('#cart-list').addEventListener('input', (e) => {
+  const li = e.target.closest('.cart-row');
+  if (!li || e.target.type !== 'number') return;
+  const v = Math.round(+e.target.value);
+  if (v >= 1) Cart.set(li.dataset.id, v);
+});
+$('#cart-list').addEventListener('focusout', (e) => {
+  if (e.target.type === 'number') e.target.value = Cart.qty(e.target.closest('.cart-row').dataset.id) || 1;
+});
+$('#to-checkout').addEventListener('click', (e) => {
+  e.preventDefault();
+  $('#checkout').scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+  $('#f-name').focus({ preventScroll: true });
+});
+
+// Телефон в виде +7 900 123-45-67
+const phone = $('#f-phone');
+phone.addEventListener('input', () => {
+  let d = phone.value.replace(/\D/g, '');
+  if (d.startsWith('8')) d = '7' + d.slice(1);
+  if (d && !d.startsWith('7')) d = '7' + d;
+  d = d.slice(0, 11);
+  const p = [d.slice(0, 1), d.slice(1, 4), d.slice(4, 7), d.slice(7, 9), d.slice(9, 11)];
+  phone.value = d ? `+${p[0]}${p[1] ? ` ${p[1]}` : ''}${p[2] ? ` ${p[2]}` : ''}${p[3] ? `-${p[3]}` : ''}${p[4] ? `-${p[4]}` : ''}` : '';
+});
+
+function setError(input, errId, bad) {
+  input.setAttribute('aria-invalid', String(bad));
+  $(`#${errId}`).hidden = !bad;
+  return bad;
+}
+$('#checkout').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const badName = setError($('#f-name'), 'e-name', !$('#f-name').value.trim());
+  const badPhone = setError(phone, 'e-phone', phone.value.replace(/\D/g, '').length !== 11);
+  const badConsent = setError($('#f-consent'), 'e-consent', !$('#f-consent').checked);
+  const firstBad = [badName && $('#f-name'), badPhone && phone, badConsent && $('#f-consent')].find(Boolean);
+  if (firstBad) { firstBad.focus(); return; }
+  // В WordPress здесь будет отправка заказа в WooCommerce
+  const num = String(Date.now()).slice(-5);
+  $('#order-num').textContent = `№ ${num}`;
+  $('#order-phone').textContent = phone.value;
+  $('#cart-layout').hidden = true;
+  $('#cart-meta').textContent = '';
+  $('#order-done').hidden = false;
+  Cart.clear();
+  $('#done-h').focus();
+});
+
+Cart.onChange(render);
+startRibbons($('#ribbons'));
+render();
+})();
+</script>
+</body>
+</html>
