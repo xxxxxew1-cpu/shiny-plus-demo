@@ -129,6 +129,9 @@
     background:
       radial-gradient(42% 52% at 50% 0%, rgba(124, 138, 156, .22), transparent 75%),
       radial-gradient(60% 50% at 50% 100%, rgba(0, 0, 0, .55), transparent 70%);
+    /* подсветка, тень и зерно растворяются к краям блока — без «ступеньки» тона под баннером и над каталогом */
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 58%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 58%, transparent);
   }
   /* зерно убирает полосы на тёмных градиентах */
   .hero-bg::after {
@@ -148,7 +151,7 @@
         radial-gradient(34% 62% at 74% 8%, rgba(124, 138, 156, .26), transparent 78%),
         radial-gradient(50% 40% at 74% 92%, rgba(0, 0, 0, .6), transparent 70%);
     }
-    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 16px; min-height: min(780px, calc(100svh - 100px)); }
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 16px; }
   }
   @media (min-width: 1100px) {
     .hero { padding-block: 24px 96px; }
@@ -156,7 +159,7 @@
   }
   @media (min-width: 1680px) {
     .wrap { max-width: 1480px; }
-    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 760px); min-height: min(920px, calc(100svh - 100px)); }
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 760px); }
     .hero-title { font-size: 1.25rem; }
   }
 
@@ -433,18 +436,24 @@
 
   .brands { margin-top: 40px; color: var(--text-3); max-width: 72ch; }
 
-  /* Как добраться */
-  .visit { border-top: 1px solid var(--line); }
-  .visit-grid { display: grid; gap: 40px; }
-  @media (min-width: 900px) { .visit-grid { grid-template-columns: 1fr 1.15fr; gap: 64px; align-items: stretch; } }
-  .visit-address { margin: 0 0 16px; font: 200 clamp(2.25rem, 4.6vw, 3.75rem)/1.05 var(--f); letter-spacing: -.01em; }
-  .visit-street { font-size: 1.25rem; color: var(--text-2); }
-  .visit-phone { margin-top: 10px; color: var(--text-2); }
-  .visit-phone a { color: var(--text); text-decoration: none; white-space: nowrap; }
+  /* Связаться: компактная полоса — текст слева, кнопки справа */
+  .section.visit { padding-block: 32px 64px; }
+  @media (min-width: 760px) { .section.visit { padding-block: 48px 96px; } }
+  .visit-panel {
+    display: grid; gap: 24px; padding: 28px 22px;
+    background: rgba(22, 25, 29, .72); border: 1px solid var(--line); border-radius: 14px;
+  }
+  @media (min-width: 900px) {
+    .visit-panel { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 48px; padding: 40px 48px; }
+  }
+  @media (min-width: 1024px) { .visit-panel { -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); } }
+  .visit-title { margin: 0 0 10px; font: 200 clamp(1.875rem, 3.4vw, 2.75rem)/1.1 var(--f); letter-spacing: -.01em; }
   .visit-note { margin-top: 24px; color: var(--text-3); max-width: 46ch; }
+  .visit-panel .visit-note { margin: 0; color: var(--text-2); }
   .visit-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
-  .map { min-height: 360px; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
-  .map iframe { display: block; width: 100%; height: 100%; min-height: 360px; border: 0; filter: invert(.92) hue-rotate(180deg) saturate(.6) contrast(.92); }
+  .visit-panel .visit-actions { margin-top: 0; }
+  @media (max-width: 640px) { .visit-panel .visit-actions .btn { flex: 1 1 100%; } }
+  .contact-block { padding-bottom: 72px; }
 
   /* Подвал */
   .site-footer { border-top: 1px solid var(--line); padding-block: 32px 40px; color: var(--text-3); font-size: .875rem; }
@@ -700,7 +709,6 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 .cart-summary dd { margin: 0; }
 .cart-summary .sum-total { padding-top: 14px; border-top: 1px solid var(--line); color: var(--text); }
 .sum-total dd { font: 300 1.875rem/1 var(--f); font-variant-numeric: lining-nums; }
-.sum-note { font-size: .875rem; color: var(--text-3); }
 .checkout { max-width: 600px; }
 .field { margin: 0 0 18px; padding: 0; border: 0; }
 .field > label, .field > legend { display: block; margin-bottom: 8px; padding: 0; color: var(--text-2); font-size: .9375rem; }
@@ -733,6 +741,101 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 .todo { color: var(--text-3); }
 .legal { padding-block: 48px 96px; border-top: 1px solid var(--line); }
 .legal p { max-width: 62ch; color: var(--text-2); }
+
+/* ===================== Баннер-слайдер с акциями ===================== */
+/* Стоит сразу под шапкой. Тёмное вино: от графитового сайта отличается оттенком и красной кромкой, а не яркостью.
+   Под текстом слева — почти чёрный, за шиной справа — тлеющий красный, самое яркое — кнопка */
+.promo { padding-block: 12px 0; }
+@media (min-width: 760px) { .promo { padding-block: 20px 0; } }
+.promo-box {
+  position: relative; overflow: hidden; isolation: isolate; border-radius: 14px; color: #fff;
+  background:
+    radial-gradient(44% 120% at 80% 30%, rgba(224, 25, 15, .34), transparent 66%),
+    linear-gradient(112deg, #1A0B0B 0%, #260C0A 42%, #3D0F0B 74%, #2E0C0A 100%);
+  border: 1px solid rgba(224, 25, 15, .32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 24px 60px -34px rgba(224, 25, 15, .45);
+}
+/* зерно — чтобы тёмный красный не расслаивался на полосы */
+.promo-box::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .1; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.promo-track { position: relative; z-index: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.promo-track::-webkit-scrollbar { display: none; }
+.promo-slide {
+  position: relative; isolation: isolate; flex: 0 0 100%; scroll-snap-align: start;
+  display: grid; align-items: center; min-height: 268px; padding: 22px 20px 64px; overflow: hidden;
+}
+@media (min-width: 760px) {
+  .promo-slide { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; min-height: 290px; padding: 32px 56px 64px; }
+}
+@media (min-width: 1100px) { .promo-slide { min-height: 310px; } }
+.promo-arcs { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.promo-arcs stop { stop-color: #FF4A36; }
+/* на телефоне текст слева, шина уезжает за правый край */
+.promo-text { position: relative; max-width: 64%; }
+@media (min-width: 760px) { .promo-text { max-width: none; } }
+.promo-title { margin: 0 0 10px; font: 300 clamp(1.625rem, 7.6vw, 2.25rem)/1.04 var(--f); letter-spacing: -.01em; text-wrap: balance; }
+@media (min-width: 760px) { .promo-title { margin-bottom: 14px; font-size: clamp(2.25rem, 4.2vw, 3.5rem); } }
+.promo-sub { max-width: 36ch; margin: 0 0 20px; font-size: .9375rem; line-height: 1.5; color: var(--text-2); }
+@media (min-width: 760px) { .promo-sub { margin-bottom: 26px; font-size: 1rem; } }
+.promo-visual { position: absolute; z-index: -1; right: -24%; top: 50%; width: 68%; height: 84%; transform: translateY(-56%); }
+@media (min-width: 760px) { .promo-visual { position: relative; z-index: auto; right: auto; top: auto; width: auto; height: 240px; transform: none; } }
+@media (min-width: 1100px) { .promo-visual { height: 260px; } }
+/* тень под колесом: шина стоит, а не висит в красном */
+.promo-visual::before {
+  content: ''; position: absolute; left: 20%; right: 20%; bottom: 3%; height: 12%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .6), transparent);
+  opacity: 0; transition: opacity .6s var(--ease);
+}
+/* тень появляется вместе с отрендеренной шиной, а не раньше неё */
+.promo-visual:has(.promo-img.is-ready)::before { opacity: 1; }
+.promo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+/* доставка: колесо въезжает, за ним полосы скорости */
+.promo-trails {
+  position: absolute; left: -8%; width: 58%; top: 30%; height: 40%;
+  background: repeating-linear-gradient(180deg, transparent 0 12px, rgba(255, 74, 54, .5) 12px 13px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 75%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 75%, transparent);
+}
+.promo-slide.is-active .promo-trails { animation: promo-trails .9s var(--ease-out) both; }
+.promo-slide.is-active.is-delivery .promo-img { animation: promo-roll 1s var(--ease-out) both; }
+@keyframes promo-trails { from { transform: translateX(40px); opacity: 0; } }
+@keyframes promo-roll { from { transform: translateX(-36px); } }
+/* шиномонтаж: вокруг колеса прорисовывается красная дуга */
+.promo-ring { position: absolute; left: 50%; top: 50%; width: auto; height: 96%; aspect-ratio: 1; transform: translate(-50%, -50%); overflow: visible; }
+.promo-ring-base { fill: none; stroke: rgba(255, 255, 255, .1); stroke-width: 1; }
+.promo-ring-arc { fill: none; stroke: #FF3A2E; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 30 70; transform-origin: 100px 100px; transform: rotate(-90deg); }
+.promo-slide.is-active .promo-ring-arc { animation: promo-ring 1.4s var(--ease-out) both; }
+@keyframes promo-ring { from { stroke-dasharray: 0 100; transform: rotate(-200deg); } }
+/* индикаторы с полоской до следующего слайда, пауза и стрелки */
+.promo-dots { position: absolute; z-index: 2; left: 10px; bottom: 12px; display: flex; align-items: center; }
+@media (min-width: 760px) { .promo-dots { left: 48px; bottom: 16px; } }
+.promo-dot { position: relative; width: 52px; height: 36px; padding: 0; border: 0; background: none; cursor: pointer; }
+.promo-dot::before, .promo-dot::after { content: ''; position: absolute; left: 8px; right: 8px; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: rgba(255, 255, 255, .34); }
+.promo-dot::after { background: #fff; transform: scaleX(0); transform-origin: left; }
+.promo-dot[aria-current="true"]::after { transform: scaleX(1); }
+.promo-box.is-running .promo-dot[aria-current="true"]::after { animation: promo-progress var(--promo-delay, 6.5s) linear both; }
+@keyframes promo-progress { from { transform: scaleX(0); } }
+.promo-dot:focus-visible, .promo-pause:focus-visible, .promo-arrow:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 6px; }
+.promo-pause { display: grid; place-items: center; width: 40px; height: 40px; margin-left: 2px; border: 0; border-radius: 50%; background: none; color: rgba(255, 255, 255, .8); cursor: pointer; }
+.promo-pause:hover { color: #fff; }
+.promo-pause .icon { width: 16px; height: 16px; }
+.promo-pause .i-play { fill: currentColor; stroke: none; }
+.promo-pause[data-state="pause"] .i-play, .promo-pause[data-state="play"] .i-pause { display: none; }
+.promo-arrows { position: absolute; z-index: 2; right: 16px; bottom: 16px; display: none; gap: 8px; }
+@media (min-width: 760px) { .promo-arrows { display: flex; right: 24px; bottom: 14px; } }
+.promo-arrow {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(40, 0, 0, .18); color: #fff; border: 1px solid rgba(255, 255, 255, .45); cursor: pointer;
+  transition: border-color .3s var(--ease), background-color .3s var(--ease);
+}
+.promo-arrow:hover { border-color: #fff; background: rgba(255, 255, 255, .16); }
+/* телефон боком: баннер не должен занимать весь экран */
+@media (min-width: 600px) and (max-height: 540px) and (orientation: landscape) {
+  .promo-slide { min-height: 0; padding-block: 16px 56px; }
+  .promo-visual { height: 92%; }
+}
 
 /* Плашка демо-версии — только для публикации прототипа */
 .demo-bar { position: relative; z-index: 41; padding: 7px 16px; background: #2A1210; color: #FFB4AC; font: 400 .8125rem/1.4 var(--f); text-align: center; border-bottom: 1px solid rgba(224, 25, 15, .35); }

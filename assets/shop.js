@@ -243,23 +243,25 @@ function reveal(els, step = 1) {
 
 // Схема сечения обода: пунктир — середина обода, красное — привалочная плоскость, между ними вылет
 function etDiagram(value) {
-  if (!value) return '';
-  const et = +value, mm = 0.9;                  // масштаб: обод шириной около 165 мм
+  // «любой»: та же схема без числа — плоскость на типичном месте, бледнее; левая половина окна не пустеет
+  const any = !value;
+  const et = any ? 40 : +value, mm = 0.9;       // масштаб: обод шириной около 165 мм
   const cx = 100, inner = 26, outer = 174, mx = cx + et * mm;
-  return `<svg viewBox="0 0 200 146" role="img" aria-label="Схема: вылет ${et} мм — расстояние от середины обода до привалочной плоскости">
+  const label = any ? 'Схема: вылет — расстояние от середины обода до привалочной плоскости' : `Схема: вылет ${et} мм — расстояние от середины обода до привалочной плоскости`;
+  return `<svg viewBox="0 0 200 146" role="img" aria-label="${label}">
     <path d="M${inner} 22 V36 H${outer} V22" fill="none" stroke="#A7AEB6" stroke-width="2" stroke-linejoin="round"/>
     <path d="M${outer - 10} 36 C${outer - 10} 68 ${mx + 8} 70 ${mx} 96 V112" fill="none" stroke="#A7AEB6" stroke-width="2"/>
     <line x1="${cx}" y1="12" x2="${cx}" y2="124" stroke="#707882" stroke-width="1" stroke-dasharray="3 3"/>
-    <line x1="${mx}" y1="84" x2="${mx}" y2="124" stroke="#FF3A2E" stroke-width="3"/>
+    <line x1="${mx}" y1="84" x2="${mx}" y2="124" stroke="#FF3A2E" stroke-width="3"${any ? ' stroke-opacity=".5"' : ''}/>
     <line x1="${cx}" y1="120" x2="${mx}" y2="120" stroke="#F2F3F5" stroke-width="1"/>
-    <text class="et-value" x="${(cx + mx) / 2}" y="134" text-anchor="middle">ET ${et}</text>
+    <text class="et-value" x="${(cx + mx) / 2}" y="134" text-anchor="middle">${any ? 'ET' : `ET ${et}`}</text>
     <text x="${cx - 4}" y="10" text-anchor="end">середина обода</text>
     <text x="${mx - 6}" y="100" text-anchor="end">привалочная</text>
     <text x="${mx - 6}" y="110" text-anchor="end">плоскость</text>
     <text x="${inner}" y="144">к автомобилю</text>
     <text x="${outer}" y="144" text-anchor="end">наружу</text>
   </svg>
-  <p class="et-note">Меньше вылет — колесо сильнее выступает из арки, больше — глубже уходит в неё.</p>`;
+  <p class="et-note">${any ? 'Вылет — расстояние от середины обода до привалочной плоскости, в миллиметрах.' : 'Меньше вылет — колесо сильнее выступает из арки, больше — глубже уходит в неё.'}</p>`;
 }
 
 // ---------- Рендеры колёс для карточек ----------
@@ -369,13 +371,13 @@ const drum = (() => {
   function place() {
     if (!ctx) return;
     if (sheet.matches) { pop.style.left = pop.style.top = ''; return; }
-    const r = ctx.btn.getBoundingClientRect();
+    const { x, y } = ctx.anchor;
     const w = pop.offsetWidth, h = pop.offsetHeight;
     const bandY = box.offsetTop + box.offsetHeight / 2;
     const bandX = box.offsetLeft + box.offsetWidth / 2;
     // полоса выбора ложится ровно на число, которое меняем; схема, если есть, — сбоку
-    const left = clamp(r.left + r.width / 2 - bandX, 8, innerWidth - w - 8);
-    const top = clamp(r.top + r.height / 2 - bandY, 8, innerHeight - h - 8);
+    const left = clamp(x - bandX, 8, innerWidth - w - 8);
+    const top = clamp(y - bandY, 8, innerHeight - h - 8);
     pop.style.left = `${left}px`;
     pop.style.top = `${top}px`;
   }
@@ -383,6 +385,9 @@ const drum = (() => {
   function open(btn, config) {
     if (ctx) finish(true, false);
     ctx = { btn, ...config };
+    // центр кнопки запоминаем при открытии: число на ней меняет ширину («любой» → «35»), а окно не должно ездить следом
+    const r = btn.getBoundingClientRect();
+    ctx.anchor = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
     opts = config.options;
     list.innerHTML = opts.map((o, i) => `<li role="option" id="drum-opt-${i}" data-index="${i}" aria-selected="false">${o.label}${o.available
       ? '<span class="drum-dot" aria-hidden="true"></span><span class="visually-hidden">, есть в наличии</span>' : ''}</li>`).join('');

@@ -436,9 +436,11 @@ function createTire3D(stage) {
       tire.geometry.dispose();
       tire.geometry = new THREE.LatheGeometry(NORM_PTS.map((p) => new THREE.Vector2(r + p.x * h, p.y * half)), 192);
       layoutTread(dm, season);
-      // диск садится закраиной на борт шины
-      const offset = 0.78 * half - 0.215 * r;
-      rimGroup.scale.setScalar(r);
+      // диск садится закраиной на борт шины. Узкая шина на большом диаметре: диск поджимаем по оси,
+      // чтобы обод заканчивался внутри покрышки (тыльный край — не дальше 0.9 полуширины), а не торчал сзади
+      const sy = Math.min(1, (1.68 * half) / (0.835 * r));
+      const offset = 0.78 * half - 0.215 * r * sy;
+      rimGroup.scale.set(r, r * sy, r);
       rimGroup.position.y = offset;
       // вылет: привалочная плоскость сдвигается от середины обода. Меньше вылет — спицы глубже в ободе, больше — диск площе
       const { mount, nuts } = rimGroup.userData;
@@ -451,8 +453,8 @@ function createTire3D(stage) {
         nut.position.x = Math.cos(a) * boltR;
         nut.position.z = Math.sin(a) * boltR;
       });
-      caliper.scale.setScalar(r);
-      caliper.position.y = offset + (mount.position.y - 0.21) * r;
+      caliper.scale.set(r, r * sy, r);
+      caliper.position.y = offset + (mount.position.y - 0.21) * r * sy;
       // колесо стоит на подиуме
       root.position.y = FLOOR_Y + R * 1.024;
       shadow.position.y = -R * 1.024 + 0.004;
