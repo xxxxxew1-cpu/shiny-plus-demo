@@ -103,7 +103,7 @@
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div class="hero-main">
-        <h1 class="hero-title" id="hero-title">Шины и диски в Новокузнецке</h1>
+        <h1 class="hero-title visually-hidden" id="hero-title">Шины и диски в Новокузнецке</h1>
 
         <div class="kind-switch" role="group" aria-label="Что подобрать">
           <button type="button" data-kind="tires" aria-pressed="true">Шины</button>
@@ -173,6 +173,11 @@
       </div>
     </div>
   </section>
+  <script>
+    // на телефоне баннер стоит под подбором: при загрузке первым виден подбор, а не реклама.
+    // Переставляем сразу при разборе страницы — до первой отрисовки, без прыжка
+    if (matchMedia('(max-width: 759px)').matches) document.getElementById('picker').after(document.querySelector('.promo'));
+  </script>
 
   <section class="section catalog" id="catalog" aria-labelledby="catalog-title">
     <div class="wrap">
@@ -455,6 +460,13 @@ bindCards($('#results'));
   new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; schedule(); }, { threshold: 0.35 }).observe(box);
   document.addEventListener('visibilitychange', schedule);
   addEventListener('resize', () => { track.scrollLeft = slides[index].offsetLeft; });
+
+  // поворот планшета или окно через 760 px: баннер переезжает между «под шапкой» и «под подбором»
+  const narrow = matchMedia('(max-width: 759px)');
+  narrow.addEventListener('change', () => {
+    const promo = box.closest('.promo'), picker = $('#picker');
+    if (narrow.matches) picker.after(promo); else picker.before(promo);
+  });
 
   syncPause();
   activate(0);

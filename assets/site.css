@@ -745,17 +745,18 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 /* ===================== Баннер-слайдер с акциями ===================== */
 /* Стоит сразу под шапкой. Тёмное вино: от графитового сайта отличается оттенком и красной кромкой, а не яркостью.
    Под текстом слева — почти чёрный, за шиной справа — тлеющий красный, самое яркое — кнопка */
-.promo { padding-block: 12px 0; }
+/* на телефоне баннер стоит под подбором (переставляет скрипт в index.html) — отступ до линии каталога */
+.promo { padding-block: 0 40px; }
 @media (min-width: 760px) { .promo { padding-block: 20px 0; } }
 .promo-box {
   position: relative; overflow: hidden; isolation: isolate; border-radius: 14px; color: #fff;
   background:
-    radial-gradient(44% 120% at 80% 30%, rgba(224, 25, 15, .34), transparent 66%),
-    linear-gradient(112deg, #1A0B0B 0%, #260C0A 42%, #3D0F0B 74%, #2E0C0A 100%);
-  border: 1px solid rgba(224, 25, 15, .32);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 24px 60px -34px rgba(224, 25, 15, .45);
+    radial-gradient(40% 120% at 82% 40%, rgba(224, 25, 15, .16), transparent 70%),
+    linear-gradient(112deg, #16181B 0%, #1A1C20 55%, #231819 100%);
+  border: 1px solid var(--line-2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
 }
-/* зерно — чтобы тёмный красный не расслаивался на полосы */
+/* зерно — чтобы тёмный градиент не расслаивался на полосы */
 .promo-box::before {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .1; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -764,24 +765,25 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 .promo-track::-webkit-scrollbar { display: none; }
 .promo-slide {
   position: relative; isolation: isolate; flex: 0 0 100%; scroll-snap-align: start;
-  display: grid; align-items: center; min-height: 268px; padding: 22px 20px 64px; overflow: hidden;
+  display: grid; align-items: center; min-height: 196px; padding: 18px 18px 48px; overflow: hidden;
 }
 @media (min-width: 760px) {
-  .promo-slide { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; min-height: 290px; padding: 32px 56px 64px; }
+  .promo-slide { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; min-height: 250px; padding: 28px 56px 60px; }
 }
-@media (min-width: 1100px) { .promo-slide { min-height: 310px; } }
-.promo-arcs { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; }
+@media (min-width: 1100px) { .promo-slide { min-height: 270px; } }
+.promo-arcs { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; opacity: .45; }
 .promo-arcs stop { stop-color: #FF4A36; }
 /* на телефоне текст слева, шина уезжает за правый край */
 .promo-text { position: relative; max-width: 64%; }
 @media (min-width: 760px) { .promo-text { max-width: none; } }
-.promo-title { margin: 0 0 10px; font: 300 clamp(1.625rem, 7.6vw, 2.25rem)/1.04 var(--f); letter-spacing: -.01em; text-wrap: balance; }
-@media (min-width: 760px) { .promo-title { margin-bottom: 14px; font-size: clamp(2.25rem, 4.2vw, 3.5rem); } }
-.promo-sub { max-width: 36ch; margin: 0 0 20px; font-size: .9375rem; line-height: 1.5; color: var(--text-2); }
-@media (min-width: 760px) { .promo-sub { margin-bottom: 26px; font-size: 1rem; } }
-.promo-visual { position: absolute; z-index: -1; right: -24%; top: 50%; width: 68%; height: 84%; transform: translateY(-56%); }
-@media (min-width: 760px) { .promo-visual { position: relative; z-index: auto; right: auto; top: auto; width: auto; height: 240px; transform: none; } }
-@media (min-width: 1100px) { .promo-visual { height: 260px; } }
+.promo-title { margin: 0 0 8px; font: 300 clamp(1.375rem, 6.4vw, 1.75rem)/1.08 var(--f); letter-spacing: -.01em; text-wrap: balance; }
+@media (min-width: 760px) { .promo-title { margin-bottom: 12px; font-size: clamp(2rem, 3.8vw, 3rem); } }
+.promo-sub { max-width: 30ch; margin: 0 0 14px; font-size: .875rem; line-height: 1.5; color: var(--text-2); }
+@media (min-width: 760px) { .promo-sub { max-width: 36ch; margin-bottom: 22px; font-size: 1rem; } }
+@media (max-width: 759px) { .promo .btn { min-height: 42px; padding: 0 18px; font-size: .9375rem; } }
+.promo-visual { position: absolute; z-index: -1; right: -20%; top: 50%; width: 58%; height: 82%; transform: translateY(-56%); }
+@media (min-width: 760px) { .promo-visual { position: relative; z-index: auto; right: auto; top: auto; width: auto; height: 210px; transform: none; } }
+@media (min-width: 1100px) { .promo-visual { height: 230px; } }
 /* тень под колесом: шина стоит, а не висит в красном */
 .promo-visual::before {
   content: ''; position: absolute; left: 20%; right: 20%; bottom: 3%; height: 12%;
@@ -794,7 +796,7 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 /* доставка: колесо въезжает, за ним полосы скорости */
 .promo-trails {
   position: absolute; left: -8%; width: 58%; top: 30%; height: 40%;
-  background: repeating-linear-gradient(180deg, transparent 0 12px, rgba(255, 74, 54, .5) 12px 13px);
+  background: repeating-linear-gradient(180deg, transparent 0 12px, rgba(255, 74, 54, .3) 12px 13px);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 75%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 75%, transparent);
 }
@@ -809,7 +811,7 @@ textarea.input { min-height: 104px; padding: 10px 12px; resize: vertical; line-h
 .promo-slide.is-active .promo-ring-arc { animation: promo-ring 1.4s var(--ease-out) both; }
 @keyframes promo-ring { from { stroke-dasharray: 0 100; transform: rotate(-200deg); } }
 /* индикаторы с полоской до следующего слайда, пауза и стрелки */
-.promo-dots { position: absolute; z-index: 2; left: 10px; bottom: 12px; display: flex; align-items: center; }
+.promo-dots { position: absolute; z-index: 2; left: 8px; bottom: 4px; display: flex; align-items: center; }
 @media (min-width: 760px) { .promo-dots { left: 48px; bottom: 16px; } }
 .promo-dot { position: relative; width: 52px; height: 36px; padding: 0; border: 0; background: none; cursor: pointer; }
 .promo-dot::before, .promo-dot::after { content: ''; position: absolute; left: 8px; right: 8px; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: rgba(255, 255, 255, .34); }
