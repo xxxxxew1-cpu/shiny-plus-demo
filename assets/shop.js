@@ -47,7 +47,8 @@ const FIELD_TITLES = {
   tires: { width: 'Ширина, мм', profile: 'Профиль, %', diameter: 'Диаметр, дюймы' },
   wheels: { diameter: 'Диаметр, дюймы', pcd: 'Сверловка', et: 'Вылет, мм' },
 };
-const optionLabel = (field, value) => (field === 'et' && !value ? 'любой' : value);
+// пустое значение — «любая/любой» по роду поля: так оно подписано в барабане
+const optionLabel = (field, value) => value || ({ width: 'любая', pcd: 'любая' }[field] || 'любой');
 const NOUN_SHOW = { tires: ['шину', 'шины', 'шин'], wheels: ['диск', 'диска', 'дисков'] };
 const NOUN_FOUND = { tires: ['шина', 'шины', 'шин'], wheels: ['диск', 'диска', 'дисков'] };
 const icon = (id) => `<svg class="icon" aria-hidden="true"><use href="#i-${id}"/></svg>`;

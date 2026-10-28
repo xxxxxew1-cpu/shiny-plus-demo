@@ -233,6 +233,14 @@
   .code-btn:hover::after, .code-btn[aria-expanded="true"]::after { background: var(--red); height: 2px; }
   .code-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 6px; border-radius: 4px; }
   .code-val { display: inline-block; }
+  /* не выбрано: приглушённый прочерк в ширину обычного числа — читается как пустое поле, раскладка не прыгает при выборе */
+  .code-btn.is-empty { color: var(--text-3); text-align: center; }
+  .code-btn.is-empty:hover { color: var(--text-2); }
+  .code-btn.is-empty[data-field="width"] { min-width: 1.7em; }
+  .code-btn.is-empty:is([data-field="profile"], [data-field="diameter"], [data-field="et"]) { min-width: 1.15em; }
+  .code-btn.is-empty[data-field="pcd"] { min-width: 2.6em; }
+  /* диаметр дисков: «R» с числом уже подписи «диаметр» — без запаса подпись наезжает на «сверловку» */
+  .code-wheels .code-btn[data-field="diameter"] { min-width: 1.7em; }
   .code-cap {
     position: absolute; left: 0; top: calc(100% + 12px);
     display: inline-flex; align-items: center; gap: 4px;

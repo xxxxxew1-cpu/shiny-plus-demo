@@ -111,7 +111,7 @@
         </div>
 
         <form class="picker" id="form-tires" data-kind="tires">
-          <p class="picker-hint">Выберите размер так, как он написан на боковине шины</p>
+          <p class="picker-hint">Выберите нужные вам значения — так, как они написаны на боковине шины</p>
           <div class="code">
             <div class="code-part">
               <button type="button" class="code-btn" data-field="width" aria-haspopup="listbox" aria-expanded="false"><span class="code-val"></span></button>
@@ -144,7 +144,7 @@
         </form>
 
         <form class="picker" id="form-wheels" data-kind="wheels" hidden>
-          <p class="picker-hint">Параметры есть в руководстве к автомобилю и на внутренней стороне старого диска</p>
+          <p class="picker-hint">Выберите нужные вам значения. Они есть в руководстве к автомобилю и на внутренней стороне старого диска</p>
           <div class="code code-wheels">
             <div class="code-part code-gap">
               <span class="code-row"><span class="code-sep" aria-hidden="true">R</span><button type="button" class="code-btn" data-field="diameter" aria-haspopup="listbox" aria-expanded="false"><span class="code-val"></span></button></span>
@@ -240,17 +240,19 @@ const month = new Date().getMonth();
 const state = {
   kind: 'tires',
   sized: false,
-  tires: { width: '205', profile: '55', diameter: '16', season: month >= 9 || month <= 3 ? 'winter' : 'summer' },
-  wheels: { diameter: '14', pcd: '4×100', et: '' },
+  // размер по умолчанию не выбран — прочерки: заранее выставленное число читалось как «есть только такой размер»
+  tires: { width: '', profile: '', diameter: '', season: month >= 9 || month <= 3 ? 'winter' : 'summer' },
+  wheels: { diameter: '', pcd: '', et: '' },
 };
 const forms = { tires: $('#form-tires'), wheels: $('#form-wheels') };
 
+// пустое поле — «любое значение»: подходит всё, что совпало по остальным
 function matches(kind, sized, s = state[kind]) {
   if (kind === 'tires') {
     return TIRES.filter((t) => t.season === state.tires.season
-      && (!sized || (t.width == s.width && t.profile == s.profile && t.d == s.diameter)));
+      && (!sized || ((!s.width || t.width == s.width) && (!s.profile || t.profile == s.profile) && (!s.diameter || t.d == s.diameter))));
   }
-  return WHEELS.filter((w) => !sized || (w.d == s.diameter && w.pcd === s.pcd && (!s.et || w.et == s.et)));
+  return WHEELS.filter((w) => !sized || ((!s.diameter || w.d == s.diameter) && (!s.pcd || w.pcd === s.pcd) && (!s.et || w.et == s.et)));
 }
 
 const queryLabel = (kind) => {
@@ -262,16 +264,19 @@ const queryLabel = (kind) => {
 const tire3d = createTire3D($('#tire-stage'));
 thumbs.use(tire3d);
 
+// пока поле не выбрано, колесо стоит в ходовом размере; надпись на боковине — только когда размер выбран целиком
+const SHOWN = { width: '205', profile: '55', diameter: '16', pcd: '4×100' };
 function syncTire(kick = 0, view = null) {
-  const s = state.tires;
-  const d = state.kind === 'wheels' ? state.wheels.diameter : s.diameter;
+  const s = state.tires, wh = state.wheels;
+  const chosenD = state.kind === 'wheels' ? wh.diameter : s.diameter;
+  const w = s.width || SHOWN.width, p = s.profile || SHOWN.profile, d = chosenD || SHOWN.diameter, pcd = wh.pcd || SHOWN.pcd;
   tire3d.update({
-    w: +s.width, p: +s.profile, d: +d,
-    et: +(state.wheels.et || 40),
-    pcd: pcdMm(state.wheels.pcd),
+    w: +w, p: +p, d: +d,
+    et: +(wh.et || 40),
+    pcd: pcdMm(pcd),
     season: s.season,
-    bolts: parseInt(state.wheels.pcd, 10),
-    label: `${s.width}/${s.profile} R${d}`,
+    bolts: parseInt(pcd, 10),
+    label: s.width && s.profile && chosenD ? `${w}/${p} R${d}` : '',
     kind: state.kind,
     kick,
     view,
@@ -294,9 +299,10 @@ function setField(kind, field, value) {
 
 function renderField(kind, field) {
   const btn = $(`.code-btn[data-field="${field}"]`, forms[kind]);
-  const text = optionLabel(field, state[kind][field]);
-  $('.code-val', btn).textContent = text;
-  btn.setAttribute('aria-label', `${FIELD_TITLES[kind][field]}: ${text}`);
+  const value = state[kind][field];
+  $('.code-val', btn).textContent = value || '—';
+  btn.classList.toggle('is-empty', !value);
+  btn.setAttribute('aria-label', `${FIELD_TITLES[kind][field]}: ${optionLabel(field, value)}`);
 }
 
 function updatePicker(kind) {
@@ -322,10 +328,11 @@ for (const btn of $$('.code-btn')) {
       title: FIELD_TITLES[kind][field],
       value: state[kind][field],
       preview: $('#tire-stage'),
-      options: OPTIONS[kind][field].map((value) => ({
+      // первым пунктом — «любая/любой»: вернуть поле к прочерку
+      options: (OPTIONS[kind][field][0] === '' ? OPTIONS[kind][field] : ['', ...OPTIONS[kind][field]]).map((value) => ({
         value,
         label: optionLabel(field, value),
-        available: matches(kind, true, { ...state[kind], [field]: value }).length > 0,
+        available: !!value && matches(kind, true, { ...state[kind], [field]: value }).length > 0,
       })),
       onPreview: (value) => setField(kind, field, value),
     });
@@ -337,11 +344,17 @@ function catalogUrl(sized) {
   const p = new URLSearchParams({ type: state.kind });
   if (state.kind === 'tires') {
     p.set('season', state.tires.season);
-    if (sized) { p.set('w', state.tires.width); p.set('p', state.tires.profile); p.set('d', state.tires.diameter); }
+    if (sized) {
+      const s = state.tires;
+      if (s.width) p.set('w', s.width);
+      if (s.profile) p.set('p', s.profile);
+      if (s.diameter) p.set('d', s.diameter);
+    }
   } else if (sized) {
-    p.set('d', state.wheels.diameter);
-    p.set('pcd', state.wheels.pcd);
-    if (state.wheels.et) p.set('et', state.wheels.et);
+    const s = state.wheels;
+    if (s.diameter) p.set('d', s.diameter);
+    if (s.pcd) p.set('pcd', s.pcd);
+    if (s.et) p.set('et', s.et);
   }
   return `catalog.html?${p}`;
 }
